@@ -98,11 +98,16 @@ module.exports = {
        }
        */
       if (data.StatusCode === 200)
-        cb(null, {
+        // cb(null, {
+        //   intentName: lexResponse.intentName,
+        //   payload: JSON.parse(data.Payload),
+        //   dialogState: "Fulfilled"
+        // })
+        return {
           intentName: lexResponse.intentName,
           payload: JSON.parse(data.Payload),
           dialogState: "Fulfilled"
-        })
+        }
     })
   },
   AWS

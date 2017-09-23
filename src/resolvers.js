@@ -11,12 +11,14 @@ const links = [
   },
 ];
 
-
+const aws = require("./lambdaFunctions")
 
 module.exports = {
   Query: {
     allLinks: () => links,
-    params: ,
+    params: async () => {
+      return await LexBot.getResponseMessage((error, res)=>{console.log(error)})
+    }
   },
   Mutation: {
     createLink: (_, data) => {
@@ -27,11 +29,12 @@ module.exports = {
   }
 };
 
-LexBot.getResponseMessage = (userMessage, cb) => {
+LexBot = {}
 
+LexBot.getResponseMessage = (cb) => {
   let lexRuntime = new aws.AWS.LexRuntime()
   // stick this into the api explorer
-  let input = { "text": "im bored", "userId": "122" }
+  let userMessage = { "text": "find activities westminster, california", "userId": "122" }
   const params = {
     botAlias: "$LATEST", /* required */
     botName: "Hecatea", /* required */

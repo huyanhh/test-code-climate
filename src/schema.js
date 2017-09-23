@@ -4,20 +4,26 @@ const resolvers = require("./resolvers")
 const typeDefs = `
   type LambdaParams {
     intentName: String!
-    slots: String!
-    sessionAttributes: String!
-    message: String!
     dialogState: String!
-    slotToElicit: String
-    payload: [String!]
+    payload: [Payload!]
   }
+  
+  type Activity {
+    Url: String
+    Name: String
+    Ranking: String
+    Location: String
+    StarRating: String
+    Coords: [Float]
+    Tags: [String]
+  } 
   
   type Query {
     params: [LambdaParams!]!
     allLinks: [Link!]!
    }
    
-  union Payload = Activity | Hotel | Restaurant
+  union Payload = Activity
 
   type Link {
     id: ID!
