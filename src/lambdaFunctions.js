@@ -86,28 +86,30 @@ module.exports = {
       console.error("error")
     }
 
-    lambda.invoke(params, function (err, data) {
-      if (err) console.log(err, err.stack) // an error occurred
-      else     console.log(data)           // successful response
-      /*
-       data = {
-         FunctionError: "",
-         LogResult: "",
-         Payload: <Binary String>,
-         StatusCode: 123
-       }
-       */
-      if (data.StatusCode === 200)
+    return new Promise((resolve, reject) => {
+      lambda.invoke(params, function (err, data) {
+        if (err) reject(err, err.stack) // an error occurred
+        else     console.log(data)           // successful response
+        /*
+         data = {
+           FunctionError: "",
+           LogResult: "",
+           Payload: <Binary String>,
+           StatusCode: 123
+         }
+         */
+        if (data.StatusCode === 200)
         // cb(null, {
         //   intentName: lexResponse.intentName,
         //   payload: JSON.parse(data.Payload),
         //   dialogState: "Fulfilled"
         // })
-        return {
-          intentName: lexResponse.intentName,
-          payload: JSON.parse(data.Payload),
-          dialogState: "Fulfilled"
-        }
+          resolve({
+            intentName: lexResponse.intentName,
+            payload: JSON.parse(data.Payload),
+            dialogState: "Fulfilled"
+          })
+      })
     })
   },
   AWS

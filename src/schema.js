@@ -19,7 +19,7 @@ const typeDefs = `
   } 
   
   type Query {
-    params: [LambdaParams!]!
+    params: LambdaParams!
     allLinks: [Link!]!
    }
    

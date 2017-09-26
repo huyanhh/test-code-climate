@@ -16,7 +16,7 @@ const aws = require("./lambdaFunctions")
 module.exports = {
   Query: {
     allLinks: () => links,
-    params: async () => {
+    params: async (obj) => {
       return await LexBot.getResponseMessage((error, res)=>{console.log(error)})
     }
   },
@@ -25,6 +25,13 @@ module.exports = {
       const newLink = Object.assign({id: links.length + 1}, data)
       links.push(newLink)
       return newLink
+    }
+  },
+  Payload: {
+    __resolveType(obj) {
+      if (obj.Url) {
+        return "Activity" // String resource of Activity in schema
+      }
     }
   }
 };
@@ -44,16 +51,18 @@ LexBot.getResponseMessage = (cb) => {
   }
 
   // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/LexRuntime.html#postText-property
-  lexRuntime.postText(params, function(err, lexResponse) {
-    if (err) {
-      console.error("There was an error with lex")
-      cb(err)
-    } else {
-      console.log("returned data", lexResponse)
-      if (lexResponse.dialogState !== "ReadyForFulfillment")
-        cb(null, lexResponse)
-      else
-        aws.lambda(lexResponse, cb)
-    }
+  return new Promise((resolve, reject) => {
+    lexRuntime.postText(params, function(err, lexResponse) {
+      if (err) {
+        console.error("There was an error with lex")
+        reject(err)
+      } else {
+        console.log("returned data", lexResponse)
+        if (lexResponse.dialogState !== "ReadyForFulfillment")
+          reject(null, lexResponse)
+        else
+          resolve(aws.lambda(lexResponse, cb))
+      }
+    })
   })
 }
